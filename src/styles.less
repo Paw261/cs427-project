@@ -1,1 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+@primary: #11998e;
+@secondary: #38ef7d;
+@white: #fff;
+@gray: #9b9b9b;
+@button1: #a73f2d;
+@button2: #7a2a1d;
+
+body {
+    margin: 0px;
+    font-family: Assistant,sans-serif;
+}
+
+input[type=text]{
+    font-family: inherit;
+        width: 100%;
+        border: 0;
+        border-bottom: 2px solid @white;
+        outline: 0;
+        font-size: 1.3rem;
+        color: @white;
+        padding: 7px 0;
+        background: transparent;
+        transition: border-color 0.2s;
+}
+
+button {
+	box-shadow:inset 0px 34px 0px -15px #b54b3a;
+	background-color: @button1;
+	border: none;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:9px 23px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px @button2;
+}
+
+button:hover {
+	background-color:#b34332;
+}
+
+button:active {
+    position:relative;
+    outline: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background-color: rgb(85, 85, 85);
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(235, 230, 223, 0.6);
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: @white;
+  }

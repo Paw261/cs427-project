@@ -1,0 +1,5 @@
+<div ngClass="controls">
+<input type="button" [value]="playPauseValue" (click)="playPause()">
+<input type="button" [value]="stopValue" (click)="stop()">
+<input type="range" min="0.0" max="1.0" step="0.01" [value]="volumeValue" (input)="changeVolume($event)">
+</div>

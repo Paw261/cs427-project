@@ -1,0 +1,9 @@
+<div ngClass="header">
+  <div ngClass="header-name">
+    <input [value]="trackName" placeholder="Track name" (input)="trackName = $event.target.value" type="text" />
+  </div>
+  <div ngClass="header-midiloader">
+    <input id="file-uploader" (change)="onMidiUpload($event)" type="file" accept="audio/mid" value="midi-input" />
+    <button (click)="clickMidiUpload()">Upload new MIDI</button>
+  </div>
+</div>
