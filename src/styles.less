@@ -10,7 +10,7 @@ body {
     font-family: Assistant,sans-serif;
 }
 
-input[type=text]{
+input[type=text], input[type=number]{
     font-family: inherit;
         width: 100%;
         border: 0;
@@ -21,6 +21,29 @@ input[type=text]{
         padding: 7px 0;
         background: transparent;
         transition: border-color 0.2s;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+::placeholder {
+  color: white;
 }
 
 button {
@@ -55,17 +78,85 @@ button:focus {
     width: 15px;
   }
   
-  /* Track */
   ::-webkit-scrollbar-track {
     background-color: rgb(85, 85, 85);
   }
   
-  /* Handle */
   ::-webkit-scrollbar-thumb {
     background: rgba(235, 230, 223, 0.6);
   }
   
-  /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: @white;
+  }
+
+
+  .slidecontainer {
+    width: 100%; 
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    margin: auto;
+  }
+
+  .right {
+    float: right;
+  }
+
+  .left {
+    float: left;
+  } 
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #b54b3a;
+    cursor: pointer; /* Cursor on hover */
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #b34332;
+    cursor: pointer;
+  }
+
+  .selectcontainer {
+    text-align: center;
+    padding-bottom: 15px;
+  }
+
+  .select {
+    width: 100%;
+    background: #d3d3d3;
+    height: 25px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    font-size: large;
+  }
+
+  .select:hover {
+    opacity: 1;
+  }
+
+  .select:focus {
+    outline: none;
   }

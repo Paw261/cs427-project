@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
     this.trackName = event.target.files[0].name.split(".mid")[0];
   }
 
-  clickMidiUpload(event: any){
+  clickMidiUpload(){
     document.getElementById('file-uploader').click();
   }
 

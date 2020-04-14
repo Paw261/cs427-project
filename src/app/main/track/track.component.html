@@ -1,3 +1,5 @@
+<div *ngIf="track != undefined" >
 <div *ngFor="let instrument of track.instruments">
   <app-instrument [instrument]="instrument"></app-instrument>
+</div>
 </div>

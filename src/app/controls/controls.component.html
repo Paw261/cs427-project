@@ -1,5 +1,76 @@
 <div ngClass="controls">
-<input type="button" [value]="playPauseValue" (click)="playPause()">
-<input type="button" [value]="stopValue" (click)="stop()">
-<input type="range" min="0.0" max="1.0" step="0.01" [value]="volumeValue" (input)="changeVolume($event)">
+    <div ngClass="general-inputs">
+        <div ngClass="main-controls" *ngIf="trackLoaded">
+            <button (click)="playPause()">{{playPauseValue}}</button>
+            <button (click)="restart()">Restart</button>
+            <button (click)="stop()">Stop</button>
+            <div ngClass="slidecontainer mastervolume control-field">
+                <span>Master volume</span>
+                <input ngClass="slider" type="range" min="0.0" max="1.0" step="0.01" [value]="volumeValue"
+                    (input)="changeVolume($event)">
+                <div>{{volumeValue}}</div>
+            </div>
+        </div>
+        <div ngClass="selectcontainer" *ngIf="allInstruments.length != 0">
+            <div>All instruments</div>
+            <select ngClass="select" [value]="currentinstrument != null ? currentinstrument.id : allInstruments[0].id"
+                (change)="setCurrentInstrument($event)">
+                <option *ngFor="let instrument of allInstruments" [value]="instrument.id">{{instrument.name}}</option>
+            </select>
+            <div ngClass="control-field">
+                <input ngClass="control-input" type="text" placeholder="Name of new instrument"
+                    [value]="newInstrumentName" (input)="newInstrumentName = $event.target.value" />
+                <button ngClass="control-button" (click)="addInstrument()">Add new instrument</button>
+            </div>
+        </div>
+    </div>
+    <div></div>
+    <div ngClass="current-instrument">
+        <div *ngIf="currentinstrument != undefined">
+            <h3>{{currentinstrument.name}}</h3>
+            <div ngClass="row-1">
+                <div ngClass="selectcontainer control-field">
+                    <span>Wavetype</span>
+                    <select ngClass="select" [value]="currentinstrument.waveType" (change)="pickWaveTypeInstrument($event)">
+                        <option value="sine">Sine</option>
+                        <option value="sawtooth">Sawtooth</option>
+                        <option value="square">Square</option>
+                        <option value="triangle">Triangle</option>
+                    </select>
+                </div>
+                <div ngClass="slidecontainer control-field">
+                    <span>Instrument volume</span>
+                    <input ngClass="slider" type="range" min="0.0" max="1.0" step="0.01"
+                        [value]="currentinstrument.gain" (input)="changeVolumeInstrument($event)">
+                    <div>{{currentinstrument.gain}}</div>
+                </div>
+                <div ngClass="slidecontainer control-field">
+                    <span>Panner</span>
+                    <input ngClass="slider" type="range" min="-1.0" max="1.0" step="0.01"
+                        [value]="currentinstrument.spatial" (input)="changeSpatialInstrument($event)">
+                    <div>{{currentinstrument.spatial}}</div>
+                </div>
+            </div>
+            <div ngClass="row-2">
+                <div ngClass="filter" *ngFor="let filter of currentinstrument.filterdata; let id = index">
+                    <select ngClass="select" [name]="id" [value]="filter.filterType" (change)="changeFilterType($event)">
+                        <option value="lowpass">Lowpass</option>
+                        <option value="highpass">Highpass</option>
+                        <option value="bandpass">Bandpass</option>
+                        <option value="lowshelf">Lowshelf</option>
+                        <option value="highshelf">Highshelf</option>
+                        <option value="peaking">Peaking</option>
+                        <option value="notch">Notch</option>
+                        <option value="allpass">Allpass</option>
+                    </select>
+                    <input [name]="id" type="number" [value]="filter.filterFreq"
+                        (input)="changeFilterFrequency($event)" />
+                    <button (click)="removeFilter(id)">Remove filter</button>
+                </div>
+                <div ngClass="control-field">
+                    <button ngClass="right" (click)="addFilter()">Add filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,3 +1,5 @@
-<div *lazyFor="let node of instrument.nodes">
-  <app-node [node]="node"></app-node>
-</div>
+<ng-container #container></ng-container>
+
+<ng-template #node let-node="node">
+  <app-node (delete)="deleteNode($event)" [node]="node"></app-node>
+</ng-template>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TrackService } from 'src/app/services/track.service';
+import { _Track } from 'src/app/models';
 
 @Component({
   selector: 'app-track',
@@ -22,14 +23,6 @@ export class TrackComponent implements OnInit {
   adjustMainProperties(track: _Track) {
       var main = document.getElementById("main");
       main.style.width = `${track.length + 20}px`;
-  }
-
-  addNode() {
-
-  }
-
-  removeNode() {
-    
   }
 
 }

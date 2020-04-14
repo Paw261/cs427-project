@@ -4,6 +4,7 @@ import { IMidiFile, TMidiEvent, IMidiSetTempoEvent, IMidiControlChangeEvent, IMi
 import { Observable, BehaviorSubject } from 'rxjs';
 import { MidiMessageService } from './midi-message.service';
 import { keyMap } from '../constants';
+import { _Instrument, _Node } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,9 @@ export class MidiHelperService {
   midiInstruments: BehaviorSubject<_Instrument[]>;
   midiTempo: BehaviorSubject<number>;
   midiDivision: BehaviorSubject<number>;
+
+  nodeIndexer: number = 0;
+  instrumentIndexer: number = 0;
 
   private midiMessageService: MidiMessageService;
 
@@ -56,7 +60,6 @@ export class MidiHelperService {
 
   mapMidiToInstruments(rawJson: IMidiFile) {
     var tracks = rawJson.tracks;
-    console.log(rawJson);
     this.midiDivision.next(rawJson.division);
 
     var tempSpatial = 0;
@@ -66,12 +69,17 @@ export class MidiHelperService {
 
     for (var i = 0; i < tracks.length; i++) {
       var currentInstrument: _Instrument = {
+        id: this.instrumentIndexer,
         nodes: [],
         frequencyMap: [],
         name: "instrument " + i,
         spatial: tempSpatial,
-        gain: tempGain
+        gain: tempGain,
+        waveType: "sine",
+        envelope: [1, 1, 1, 1],
+        filterdata: []
       }
+      this.instrumentIndexer++;
       var currentTime = 0;
       for (var j = 0; j < tracks[i].length; j++) {
         currentTime += tracks[i][j].delta;
@@ -111,10 +119,10 @@ export class MidiHelperService {
   mapMidiControlMeta(message: IMidiControlChangeEvent, instrument: _Instrument) {
     switch (message.controlChange.type) {
       case 7:
-        instrument.gain = this.normalizeGain(message.controlChange.value);
+        instrument.gain = Number.parseFloat(this.normalizeGain(message.controlChange.value).toFixed(2));
         break;
       case 10:
-        instrument.spatial = this.normalizeSpatial(message.controlChange.value);
+        instrument.spatial = Number.parseFloat(this.normalizeSpatial(message.controlChange.value).toFixed(2));
         break;
       default:
         break;
@@ -124,17 +132,14 @@ export class MidiHelperService {
   mapMidiFrequency(message: IMidiNoteOnEvent | IMidiNoteOffEvent, instrument: _Instrument, on: boolean, time: number) {
     if (on) {
       var node: _Node = {
-        envelopeMaxAmplitude: (message as IMidiNoteOnEvent).noteOn.velocity,
+        id: this.nodeIndexer,
+        envelopeMaxAmplitude: this.normalizeGain((message as IMidiNoteOnEvent).noteOn.velocity),
         start: time,
         key: this.mapKey((message as IMidiNoteOnEvent).noteOn.noteNumber),
         instrument: instrument,
-        waveType: "sine",
-        envelope: [1, 1, 1, 1],
-        filterFreq: -1,
-        filterType: "",
         length: undefined
       };
-      
+      this.nodeIndexer++;
       instrument.nodes.push(node);
     } else {
       var node = instrument.nodes.find(p => p.key == this.mapKey((message as IMidiNoteOffEvent).noteOff.noteNumber) && p.length == undefined);
@@ -144,12 +149,19 @@ export class MidiHelperService {
 
   mapKey(noteNumber: number): string {
     var key = keyMap[noteNumber % 12];
-    var octave = Math.floor(noteNumber / 12);
+    //-1 because the octaves start at -1
+    var octave = Math.floor(noteNumber / 12) - 1;
     return key + " " + octave;
   }
 
+  mapKeyFromScreenPosition(position: number): string {
+    //20 is the height of each key
+    var formattedData = Math.floor(position / 20) + 12;
+    return this.mapKey(formattedData);
+  }
+
   normalizeGain(midiGain: number): number {
-    return (midiGain / 127) * 100;
+    return midiGain / 127.0;
   }
 
   normalizeSpatial(midiSpatial: number): number {

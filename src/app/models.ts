@@ -1,4 +1,4 @@
-interface _Track {
+export interface _Track {
     instruments: _Instrument[],
     tempo: number,
     division: number,
@@ -7,24 +7,34 @@ interface _Track {
     length: number
 }
 
-interface _Node {
+export interface _Node {
+    id: number,
     key: string,
     instrument: _Instrument,
-    waveType: string,
-    envelope: number[],
     envelopeMaxAmplitude: number,
-    filterFreq: number,
-    filterType: string,
     length: number,
     start: number
 }
 
-interface _Instrument {
+export interface _Instrument {
+    id: number,
     name: string,
     frequencyMap: [],
     nodes: _Node[],
     spatial: number,
-    gain: number
+    gain: number,
+    waveType: OscillatorType,
+    envelope: number[],
+    filterdata: _FilterData[]
 }
 
-//create predefined instruments
+export interface _AudioNodeData {
+    modelId: number,
+    audioNodeName: string,
+    audioNodeData: AudioNode
+}
+
+export interface _FilterData {
+    filterFreq: number,
+    filterType: BiquadFilterType
+}

@@ -1,10 +1,20 @@
 <div id="main-wrapper" ngClass="main-wrapper">
-  <div id="main" ngClass="main">
-    <div ngClass="grid-background-mandatory"></div>
-    <div ngClass="grid-background-1"></div>
-    <div ngClass="grid-background-2"></div>
-    <div ngClass="top"></div>
-    <div id="music-line"></div>
-    <app-track></app-track>
+  <!-- <div ngClass="bpm">
+      <input type="text" value="bpm" />
+  </div> -->
+  <div ngClass="side-bar">
+    <div *ngFor="let i of getSupportedMidiValues()" [ngClass]="(i % 2 == 0)? 'key key1': 'key key2'">{{getKeyFromMidi(i)}}</div>
+  </div>
+  <div>
+      <div ngClass="top-bar">
+          
+      </div>
+      <div id="main" (dragstart)="false" (drop)="false" ngClass="main" (mousedown)="addNode($event)" (mousemove)="addNodeLength($event)" (mouseup)="setNodeLength()">
+        <div id="background-man" ngClass="grid-background-mandatory"></div>
+        <div id="background-1" ngClass="grid-background-1"></div>
+        <div id="background-2" ngClass="grid-background-2"></div>
+        <div id="music-line"></div>
+        <app-track></app-track>
+      </div>
   </div>
 </div>

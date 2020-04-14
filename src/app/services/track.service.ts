@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MidiHelperService } from './midi-helper.service';
 import { WebAudioHelperService } from './web-audio-helper.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { _Track, _Instrument } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class TrackService {
       this.track.value.instruments = instruments;
       this.track.value.length = this.calcTrackLength(instruments);
       if(instruments.length != 0){
+        this.webAudioHelperService.removeOldTrack();
         this.webAudioHelperService.loadTrack(this.track.value);
       }
       this.track.next(this.track.value);
@@ -41,8 +43,6 @@ export class TrackService {
       this.track.value.division = divison;
       this.track.next(this.track.value);
     });
-
-    //subscribe to much more + change stuff in webAudioHelper by user inputs
   }
 
   calcTrackLength(instruments: _Instrument[]){

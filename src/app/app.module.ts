@@ -9,8 +9,6 @@ import { ControlsComponent } from './controls/controls.component';
 import { TrackComponent } from './main/track/track.component';
 import { NodeComponent } from './main/track/instrument/node/node.component';
 import { InstrumentComponent } from './main/track/instrument/instrument.component';
-import { LazyForDirective } from './directives/lazyFor.directive';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -20,13 +18,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ControlsComponent,
     TrackComponent,
     NodeComponent,
-    InstrumentComponent,
-    LazyForDirective
+    InstrumentComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    ScrollingModule
+    AppRoutingModule
   ],
   providers: [
   ],
