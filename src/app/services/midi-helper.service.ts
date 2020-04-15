@@ -20,6 +20,7 @@ export class MidiHelperService {
   private midiMessageService: MidiMessageService;
 
   constructor(midiMessageService: MidiMessageService) {
+    //inits observables for alot of properties to be picked up by subscribers
     this.midiInstruments = new BehaviorSubject<_Instrument[]>([]);
     this.midiTempo = new BehaviorSubject<number>(1);
     this.midiDivision = new BehaviorSubject<number>(1);
@@ -27,18 +28,20 @@ export class MidiHelperService {
     this.midiMessageService = midiMessageService;
   }
 
+  //sets up observables for alot of properties to be picked up by subscribers
   getInstruments(): Observable<_Instrument[]> {
     return this.midiInstruments.asObservable();
   }
-
+  //sets up observables for alot of properties to be picked up by subscribers
   getTempo(): Observable<number> {
     return this.midiTempo.asObservable();
   }
-
+  //sets up observables for alot of properties to be picked up by subscribers
   getDivision(): Observable<number> {
     return this.midiDivision.asObservable();
   }
 
+  //is called when a midi file is uploaded
   loadMidiFile(midiFile: File) {
     //reads files from input field
     var fileReader = new FileReader();
@@ -58,6 +61,7 @@ export class MidiHelperService {
     }
   }
 
+  //takes the raw midi json data and maps to models from models.ts
   mapMidiToInstruments(rawJson: IMidiFile) {
     var tracks = rawJson.tracks;
     this.midiDivision.next(rawJson.division);
@@ -67,6 +71,7 @@ export class MidiHelperService {
 
     var instruments = [];
 
+    //creates _Instrument objects for each MIDI track
     for (var i = 0; i < tracks.length; i++) {
       var currentInstrument: _Instrument = {
         id: this.instrumentIndexer,
@@ -81,11 +86,13 @@ export class MidiHelperService {
       }
       this.instrumentIndexer++;
       var currentTime = 0;
+      //for each event in each track mapMidiMeta is called
       for (var j = 0; j < tracks[i].length; j++) {
         currentTime += tracks[i][j].delta;
         this.mapMidiMeta(tracks[i][j], currentInstrument, currentTime);
       }
 
+      //if a track has no events, it is excluded
       if (currentInstrument.nodes.length != 0) {
         instruments.push(currentInstrument);
       }
@@ -94,6 +101,7 @@ export class MidiHelperService {
     this.midiInstruments.next(instruments);
   }
 
+  //a switch for setting values based on any midi event
   mapMidiMeta(message: TMidiEvent, instrument: _Instrument, time: number) {
     switch (true) {
       case this.midiMessageService.isSetTempoMessage(message):
@@ -116,6 +124,7 @@ export class MidiHelperService {
     }
   }
 
+  //a switch for setting values based on midi controlchange events
   mapMidiControlMeta(message: IMidiControlChangeEvent, instrument: _Instrument) {
     switch (message.controlChange.type) {
       case 7:
@@ -129,6 +138,7 @@ export class MidiHelperService {
     }
   }
 
+  //creates a new node based on midi noteOn and noteOff events
   mapMidiFrequency(message: IMidiNoteOnEvent | IMidiNoteOffEvent, instrument: _Instrument, on: boolean, time: number) {
     if (on) {
       var node: _Node = {
@@ -147,6 +157,7 @@ export class MidiHelperService {
     }
   }
 
+  //based on midi number, returns the key and octave of node
   mapKey(noteNumber: number): string {
     var key = keyMap[noteNumber % 12];
     //-1 because the octaves start at -1
@@ -160,10 +171,12 @@ export class MidiHelperService {
     return this.mapKey(formattedData);
   }
 
+  //returns gain as a value between 0 and 1
   normalizeGain(midiGain: number): number {
     return midiGain / 127.0;
   }
 
+  //returns spatial as a value between -1 and 1
   normalizeSpatial(midiSpatial: number): number {
     return ((midiSpatial / 127) * 2) - 1;
   }

@@ -18,6 +18,7 @@ export class MainComponent implements OnInit {
   currentinstrument: _Instrument;
 
   mouseDown: boolean = false;
+  //dependency injection
   constructor(private webAudioHelperService: WebAudioHelperService, private midiHelperService: MidiHelperService) { }
 
   ngOnInit() {
@@ -35,6 +36,7 @@ export class MainComponent implements OnInit {
     });
   }
 
+  //sets up an interval that moves the line aswell as scrolls the window according to the track being played
   moveLine() {
     var line = document.getElementById("music-line");
     var wrapper = document.getElementById("main-wrapper");
@@ -51,9 +53,10 @@ export class MainComponent implements OnInit {
     }, 10);
   }
 
+  //resets the line to the start, when track is stopped or finished
   clearLine() {
     var line = document.getElementById("music-line");
-    var wrapper = document.getElementById("main-wrapper");
+    //var wrapper = document.getElementById("main-wrapper");
     line.style.left = "0px";
     //wrapper.scroll({left: 0});
     clearInterval(this.intervalId);
@@ -76,6 +79,10 @@ export class MainComponent implements OnInit {
     return array;
   }
 
+  //3 methods for adding a node
+
+  //on mousedown - creates a new node and pushes it onto current instruments nodes.
+  //the start of the node is at mouse position
   addNode(event) {
     if(this.currentinstrument == undefined){
       return;
@@ -98,6 +105,7 @@ export class MainComponent implements OnInit {
     this.currentinstrument.nodes.push(this.newNode);
   }
 
+  //is called on mouse up, and resets variables aswell as stops the track and reloads it, with new node
   setNodeLength() {
     if(this.newNode == undefined){
       return;
@@ -108,6 +116,7 @@ export class MainComponent implements OnInit {
     this.newNode = undefined;
   }
 
+  //is called while mouse is down, and sets the length of the node, according to mouse
   addNodeLength(event) {
     if(this.mouseDown){
       if(event.offsetX - this.newNode.start < 1){

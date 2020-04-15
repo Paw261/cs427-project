@@ -20,6 +20,7 @@ export class ControlsComponent implements OnInit {
 
   constructor(private webAudioHelperService: WebAudioHelperService, private trackService: TrackService) { }
 
+  //is called on the creation of this component.
   ngOnInit() {
     this.trackService.getTrack().subscribe((track: _Track) => {
       this.volumeValue = track.gain;
@@ -41,7 +42,7 @@ export class ControlsComponent implements OnInit {
       }
     }, 10);
   }
-
+  //function for starting/pausing the current track
   playPause() {
     if(this.playPauseValue == "Play" || this.playPauseValue == "Resume"){
       this.webAudioHelperService.play();
@@ -51,17 +52,17 @@ export class ControlsComponent implements OnInit {
       this.playPauseValue = "Resume";
     }
   }
-
+  //stops the current track
   stop() {
     this.webAudioHelperService.stop();
     this.playPauseValue = "Play";
   }
-
+  //restarts the current track
   restart() {
     this.webAudioHelperService.restart();
     this.playPauseValue = "Pause";
   }
-
+  //changes the overallvolume
   changeVolume(event) {
     this.volumeValue = event.target.value;
     this.webAudioHelperService.updateVolume(this.volumeValue);
@@ -72,17 +73,17 @@ export class ControlsComponent implements OnInit {
     this.currentinstrument.waveType = event.target.value;
     this.webAudioHelperService.updateInstrumentValuesForAudioNode(this.currentinstrument);
   }
-
+  //changes the volume of the specific instrument
   changeVolumeInstrument(event) {
     this.currentinstrument.gain = event.target.value;
     this.webAudioHelperService.updateInstrumentValuesForAudioNode(this.currentinstrument);
   }
-
+  //changes the spatial of the instrument
   changeSpatialInstrument(event) {
     this.currentinstrument.spatial = event.target.value;
     this.webAudioHelperService.updateInstrumentValuesForAudioNode(this.currentinstrument);
   }
-
+  //adds a filter to the current instrument
   addFilter() {
     this.currentinstrument.filterdata.push({
       filterFreq: 0,
@@ -90,22 +91,22 @@ export class ControlsComponent implements OnInit {
     });
     this.webAudioHelperService.stop();
   }
-
+  //removes a filter from the current instrument
   removeFilter(id) {
     this.currentinstrument.filterdata = this.currentinstrument.filterdata.filter((data, index) => index != id);
     this.webAudioHelperService.stop();
   }
-
+  //changes the filtertype of the current instrument
   changeFilterType(event) {
     this.currentinstrument.filterdata[event.target.name].filterType = event.target.value;
     this.webAudioHelperService.updateInstrumentValuesForAudioNode(this.currentinstrument, event.target.name);
   }
-
+  //changes the filter frequency of the current instrument
   changeFilterFrequency(event) {
     this.currentinstrument.filterdata[event.target.name].filterFreq = event.target.value;
     this.webAudioHelperService.updateInstrumentValuesForAudioNode(this.currentinstrument, event.target.name);
   }
-
+  //adds a new instrument with basic properties
   addInstrument() {
     var newInstrument: _Instrument = {
         id: this.allInstruments.length + 1,
@@ -125,11 +126,13 @@ export class ControlsComponent implements OnInit {
     this.webAudioHelperService.stop();
   }
 
+  //not implemented
   attachPredefinedSetting(event) {
-    //set event.target.values værdier til currentInstrument og kald update
+    //set event.target.values values to currentInstrument and call update
     //select input
   }
 
+  //sets the current instrument
   setCurrentInstrument(event) {
     var instrument = this.allInstruments.find(ins => ins.id == event.target.value);
     this.webAudioHelperService.setCurrentInstrument(instrument);

@@ -25,6 +25,7 @@ export class TrackService {
     this.midiHelperService.getInstruments().subscribe((instruments: _Instrument[]) => {
       this.track.value.instruments = instruments;
       this.track.value.length = this.calcTrackLength(instruments);
+      //if the midi generated model has any instruments web audio helper service. loadtrack is called, which maps the model to the Web audio api
       if(instruments.length != 0){
         this.webAudioHelperService.removeOldTrack();
         this.webAudioHelperService.loadTrack(this.track.value);
@@ -45,10 +46,13 @@ export class TrackService {
     });
   }
 
+  //a method for calculating the length of the track
   calcTrackLength(instruments: _Instrument[]){
     var trackLength = 0;
     for(var i = 0; i < instruments.length; i++){
+      //looks at the last node of each instrument and finds the one that ends last, which is the length of the track
       var lastNode = instruments[i].nodes.pop();
+      instruments[i].nodes.push(lastNode);
       if(lastNode.start + lastNode.length > trackLength){
         trackLength = lastNode.start + lastNode.length;
       }
@@ -56,6 +60,7 @@ export class TrackService {
     return trackLength;
   }
 
+  //can get the track as an observable
   getTrack(): Observable<_Track> {
     return this.track.asObservable();
   }

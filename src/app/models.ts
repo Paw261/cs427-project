@@ -1,3 +1,4 @@
+//The models used for the project
 export interface _Track {
     instruments: _Instrument[],
     tempo: number,

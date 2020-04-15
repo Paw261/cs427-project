@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  //is called when a midi file is uploaded
   onMidiUpload(event: any) {
     if(event.target.files[0] == null){
       return;

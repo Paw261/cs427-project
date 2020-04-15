@@ -18,13 +18,15 @@ export class InstrumentComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
   }
-
+  // called after the view is created. Sets up intervals for creating and deleting node.components
+  // couldnt be done automatically, due to performance issues. So I only render the components that are in the viewport
   ngAfterViewInit(): void {
     this.loadNodesListener();
     this.destroyNodesListener();
     this.changeDetectRef.detectChanges();
   }
 
+  //interval that creates node.components in the viewport
   private loadNodesListener() {
     setInterval(() => {
       var nodes = this.findNodesInView();
@@ -43,6 +45,7 @@ export class InstrumentComponent implements OnInit, AfterViewInit {
     }, 200);
   }
 
+  //interval that destroys node components that arnt in the viewport anymore
   private destroyNodesListener() {
     setInterval(() => {
       for (var i = 0; i < this.container.length; i++) {
@@ -54,7 +57,8 @@ export class InstrumentComponent implements OnInit, AfterViewInit {
       }
     }, 1000);
   }
-
+  
+  //method that checks if node would be in the viewport, based on node.properties
   private isNodeInView(node: _Node): boolean {
     var main = document.getElementById("main-wrapper");
     var screenWidth = screen.width;
@@ -65,6 +69,7 @@ export class InstrumentComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  //same as the above, but looks at an array of nodes instead of only one
   private findNodesInView(): _Node[] {
     var main = document.getElementById("main-wrapper");
     var screenWidth = screen.width;
@@ -72,6 +77,7 @@ export class InstrumentComponent implements OnInit, AfterViewInit {
     return this.instrument.nodes.filter(node => viewWidth < node.start + node.length && node.start < viewWidth + screenWidth);
   }
 
+  //captures an emitted node.id from a child component, and destroys that component.
   deleteNode(nodeId){
     for(var i = 0; i < this.container.length; i++){
       var node = this.container.get(i);

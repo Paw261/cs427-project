@@ -19,6 +19,8 @@ export class WebAudioHelperService {
 
   //web audio nodes
   overAllVolumeNode: GainNode;
+  //Includes all the AudioNode data needed to udpate certain values without reloading the track. This is set while mapping the nodes into audiocontext
+  //The values are edited in updateInstrumentValuesForAudioNode
   instrumentAudioNodes: _AudioNodeData[];
 
   //observables
@@ -38,11 +40,11 @@ export class WebAudioHelperService {
     this.trackLoadedObs = new BehaviorSubject<boolean>(this.trackLoaded);
   }
 
-
+  //sets up observables
   getTrackLoaded() {
     return this.trackLoadedObs.asObservable();
   }
-
+  //sets up observables
   getStatus() {
     return this.playingStatusObs.asObservable();
   }
@@ -51,15 +53,18 @@ export class WebAudioHelperService {
     return this.audioContext.currentTime;
   }
 
+  //sets up observables
   getCurrentInstrument() {
     return this.currentInstrumentObs.asObservable();
   }
 
+  //sets the current instrument in the service and updates the observable
   setCurrentInstrument(instrument: _Instrument) {
     this.currentInstrument = instrument;
     this.currentInstrumentObs.next(instrument);
   }
 
+  //is called when operating controls that can be modified without reloading the track
   updateInstrumentValuesForAudioNode(instrument: _Instrument, filterId = -1) {
 
     var audioNodes = this.instrumentAudioNodes.filter(data => data.modelId == instrument.id);
@@ -86,6 +91,8 @@ export class WebAudioHelperService {
     }
   }
 
+  //is called when the overall volume is changed and sets the volume of every instrument accordingly
+  //the overall volume is connected to an overall gainNode, but isnt connected to the audiocontext. Its value is just used in the instrument gainNodes
   updateVolumeValuesForAudioNode() {
     for (var i = 0; i < this.instrumentAudioNodes.length; i++) {
       if (this.instrumentAudioNodes[i].audioNodeName == "gain") {
@@ -95,6 +102,7 @@ export class WebAudioHelperService {
     }
   }
 
+  //checks if the track is over
   isTrackOver() {
     if (!this.trackLoaded) {
       return false;
@@ -102,6 +110,7 @@ export class WebAudioHelperService {
     return (1000 * this.getTime()) / this.secsPerTick() > this.currentTrack.length;
   }
 
+  //starts the audiocontext
   play() {
     if (!this.trackLoaded) {
       this.initPlay = true;
@@ -111,6 +120,7 @@ export class WebAudioHelperService {
     this.playingStatusObs.next("running");
   }
 
+  //pauses the audiocontext
   pause() {
     if (!this.trackLoaded) {
       this.initPlay = false;
@@ -120,6 +130,7 @@ export class WebAudioHelperService {
     this.playingStatusObs.next("suspended");
   }
 
+  //updates the overall volume and is called when master volume is changed in control.component
   updateVolume(volume: number) {
     if (!this.trackLoaded) {
       this.initVolume = volume;
@@ -129,6 +140,9 @@ export class WebAudioHelperService {
     this.updateVolumeValuesForAudioNode();
   }
 
+  //stops the track, closes the audio context, makes a new and loads the track again.
+  //Is called when song is over, when it is stopped or when editing the track in ways that needs the song to be reloaded
+  // (add/remove filter, add/remove nodes)
   stop() {
     if (!this.trackLoaded) {
       return;
@@ -141,6 +155,7 @@ export class WebAudioHelperService {
     this.loadTrack(this.currentTrack);
   }
 
+  //restarts the song, does the same as stop, but doesnt suspend the new audio context upon creation
   restart() {
     if (!this.trackLoaded) {
       return;
@@ -150,19 +165,22 @@ export class WebAudioHelperService {
     this.loadTrack(this.currentTrack);
   }
 
+
   removeOldTrack() {
     this.audioContext.close();
+    this.playingStatusObs.next("closed");
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
     this.playingStatusObs.next("suspended");
   }
 
+  //loads the track Model into the audioContext
   loadTrack(track: _Track) {
     //save in service for later use
     this.currentTrack = track;
     this.instrumentAudioNodes = [];
 
-    //sets overall volume control
+    //sets overall volume control. tracknode is just symbolic, only the value of the gainNode is used
     var trackNodes = this.addTrack(track);
 
     this.bpm = track.tempo;
@@ -183,12 +201,16 @@ export class WebAudioHelperService {
     }
     this.trackLoaded = true;
     this.trackLoadedObs.next(true);
+
     if (this.initPlay) {
       this.audioContext.resume();
       this.playingStatusObs.next("running");
     }
   }
 
+  //each add method returns the first and the last node in the chain of connected Nodes for reference
+
+  //adds a gainNode for the overall volume of the _Track, but it wont be connected to anything. The value is used however.
   addTrack(track: _Track): AudioNode[] {
     var gainNode = this.audioContext.createGain();
     gainNode.gain.value = this.overAllVolumeNode != undefined ? this.overAllVolumeNode.gain.value : this.initVolume;
@@ -196,9 +218,10 @@ export class WebAudioHelperService {
     this.overAllVolumeNode = gainNode;
 
     //return first and last nodes for reference
-    return [gainNode];
+    return [gainNode, gainNode];
   }
 
+  //adds a stereopannernode, a gainnode and some filters for each _Instrument
   addInstrument(instrument: _Instrument, audioContext: AudioContext): AudioNode[] {
     //spatial
     var spatialNode = audioContext.createStereoPanner();
@@ -242,10 +265,12 @@ export class WebAudioHelperService {
     return [gainNode, spatialNode];
   }
 
+  //adds an oscillatorNode for each _Node
   addOscillator(currentNode: _Node, audioContext: AudioContext): AudioNode[] {
     var oscillator = audioContext.createOscillator();
     var key = currentNode.key.split(" ");
 
+    //for my own sake, in case of wrong midi mapping or that I needed to support more MIDI values (see constants.ts)
     if (notes[key[0]][key[1]] == null) {
       console.log(currentNode);
       console.log("map more midi notes");
@@ -339,6 +364,7 @@ export class WebAudioHelperService {
     return 60000 / (this.bpm * this.ppq);
   }
 
+  //is called when a node.component is called. A new audiocontext is created and the sound of that node is played for a max of 3 seconds
   previewSound(node: _Node) {
     var temp = new AudioContext();
 

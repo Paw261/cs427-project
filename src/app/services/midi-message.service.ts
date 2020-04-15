@@ -7,6 +7,8 @@ import { IMidiSetTempoEvent, IMidiControlChangeEvent, TMidiEvent, IMidiNoteOnEve
 export class MidiMessageService {
 
   constructor() { }
+
+  //contains helper functions for detemining the typeof TMidiEvent
   
   isSetTempoMessage(message: TMidiEvent): message is IMidiSetTempoEvent {
     return 'setTempo' in message;

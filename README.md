@@ -1,6 +1,18 @@
 # Project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.0-rc.0.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.1
+
+The purpose of this application is to play around with music, MIDI and synthesize your own songs. Your are able to do the following:
+- Upload midi file for editing.
+- Add new instruments in the control panel at the bottom.
+- Add new sounds in the main window in the middle which connects to the current instrument, which is shown at the bottom.
+- Add filters, spatial, wavetype and volume restrictions to each individual instrument.
+- Basic control over the current song (Play, pause, resume, restart and overall volume control).
+
+In addition to that an easily understandable visual view of the song is available in the middle section.
+A build version can be experienced at `http://www2.cs.uregina.ca/~pfc226/CS427Project/project/`.
+
+The project relies heavily on Angular, aswell as RxJS.
 
 ## Development server
 
@@ -13,14 +25,6 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
 ## Further help
 
