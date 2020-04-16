@@ -161,8 +161,10 @@ export class WebAudioHelperService {
       return;
     }
     this.audioContext.close();
+    this.playingStatusObs.next("closed");
     this.audioContext = new AudioContext();
     this.loadTrack(this.currentTrack);
+    this.playingStatusObs.next("running");
   }
 
 
