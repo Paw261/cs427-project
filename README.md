@@ -11,6 +11,7 @@ The purpose of this application is to play around with music, MIDI and synthesiz
 
 In addition to that an easily understandable visual view of the song is available in the middle section.
 A build version can be experienced at `http://www2.cs.uregina.ca/~pfc226/CS427Project/project/`.
+A MIDI file for testing can also be downloaded at `http://www2.cs.uregina.ca/~pfc226/CS427Project/project/temp.mid`.
 
 The project relies heavily on Angular, aswell as RxJS.
 
